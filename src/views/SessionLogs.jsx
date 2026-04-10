@@ -78,28 +78,28 @@ export default function SessionLogs() {
     <div>
       {error && (
         <div style={{ background: 'var(--danger-light)', color: 'var(--danger)', padding: 12, borderRadius: 6, marginBottom: 16 }}>
-          {error} <button onClick={fetchLogs} className="btn btn-secondary" style={{marginLeft: 12, padding: '4px 8px'}}>Retry</button>
+          {error} <button onClick={fetchLogs} className="btn btn-secondary" style={{ marginLeft: 12, padding: '4px 8px' }}>Retry</button>
         </div>
       )}
 
       <div className="filter-bar">
         <div className="filter-tabs">
-          <div style={{position: 'relative'}}>
-            <Search size={16} color="var(--text-muted)" style={{position: 'absolute', left: 10, top: 10}} />
-            <input 
-              type="text" 
-              className="search-input" 
-              placeholder="Search Call ID..." 
+          <div style={{ position: 'relative' }}>
+            <Search size={16} color="var(--text-muted)" style={{ position: 'absolute', left: 10, top: 10 }} />
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Search Call ID..."
               value={searchCallId}
               onChange={e => setSearchCallId(e.target.value)}
-              style={{paddingLeft: 34, width: 200}}
+              style={{ paddingLeft: 34, width: 200 }}
             />
           </div>
         </div>
-        <div style={{display: 'flex', gap: 12}}>
-          <select 
-            className="dropdown-select" 
-            value={filterType} 
+        <div style={{ display: 'flex', gap: 12 }}>
+          <select
+            className="dropdown-select"
+            value={filterType}
             onChange={e => setFilterType(e.target.value)}
           >
             <option value="All">All logs</option>
@@ -107,9 +107,9 @@ export default function SessionLogs() {
             <option value="Context">With context</option>
             <option value="No Context">Without context</option>
           </select>
-          <select 
-            className="dropdown-select" 
-            value={dateRange} 
+          <select
+            className="dropdown-select"
+            value={dateRange}
             onChange={e => setDateRange(e.target.value)}
           >
             <option value="Today">Today</option>
@@ -123,23 +123,22 @@ export default function SessionLogs() {
         <table className="data-table">
           <thead>
             <tr>
-              <th scope="col" style={{width: 140}}>Time</th>
-              <th scope="col" style={{width: 120}}>Call ID</th>
-              <th scope="col">Customer message</th>
-              <th scope="col">Agent response</th>
-              <th scope="col" style={{width: 90}}>Escalated</th>
-              <th scope="col" style={{width: 120}}>Context found</th>
+              <th scope="col" style={{ width: 140 }}>Time</th>
+              <th scope="col" style={{ width: 120 }}>Call ID</th>
+              <th scope="col">Summary</th>
+              <th scope="col" style={{ width: 90 }}>Escalated</th>
+              <th scope="col" style={{ width: 120 }}>Context found</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
-              Array.from({length: 5}).map((_, i) => (
-                <tr key={i} className="skeleton-row" style={{display: 'table-row'}}>
-                  <td colSpan="6" style={{padding: '0'}}>
-                    <div style={{display: 'flex', gap: 16, padding: '16px'}}>
-                      <div className="skeleton-bar" style={{width: '10%'}}></div>
-                      <div className="skeleton-bar" style={{width: '35%'}}></div>
-                      <div className="skeleton-bar" style={{width: '35%'}}></div>
+              Array.from({ length: 5 }).map((_, i) => (
+                <tr key={i} className="skeleton-row" style={{ display: 'table-row' }}>
+                  <td colSpan="6" style={{ padding: '0' }}>
+                    <div style={{ display: 'flex', gap: 16, padding: '16px' }}>
+                      <div className="skeleton-bar" style={{ width: '10%' }}></div>
+                      <div className="skeleton-bar" style={{ width: '35%' }}></div>
+                      <div className="skeleton-bar" style={{ width: '35%' }}></div>
                     </div>
                   </td>
                 </tr>
@@ -160,28 +159,23 @@ export default function SessionLogs() {
               filteredLogs.map(log => {
                 const isExpanded = expandedRows.has(log.id);
                 return (
-                  <tr 
-                    key={log.id} 
+                  <tr
+                    key={log.id}
                     onClick={() => toggleRow(log.id)}
-                    style={{cursor: 'pointer'}}
+                    style={{ cursor: 'pointer' }}
                   >
-                    <td style={{whiteSpace: 'nowrap'}}>{formatTime(log.created_at)}</td>
-                    <td style={{fontFamily: 'monospace'}}>{log.call_id?.substring(0, 12)}</td>
+                    <td style={{ whiteSpace: 'nowrap' }}>{formatTime(log.created_at)}</td>
+                    <td style={{ fontFamily: 'monospace' }}>{log.call_id?.substring(0, 12)}</td>
                     <td>
-                      <div className={isExpanded ? '' : 'truncate-reason'} style={isExpanded ? {whiteSpace: 'pre-wrap'} : undefined}>
-                        {log.user_message || '—'}
+                      <div className={isExpanded ? '' : 'truncate-reason'} style={isExpanded ? { whiteSpace: 'pre-wrap' } : undefined}>
+                        {log.summary || '—'}
                       </div>
                     </td>
-                    <td>
-                      <div className={isExpanded ? '' : 'truncate-reason'} style={isExpanded ? {whiteSpace: 'pre-wrap'} : undefined}>
-                        {log.agent_response || '—'}
-                      </div>
+                    <td style={{ textAlign: 'center' }}>
+                      {log.was_escalated ? <span style={{ color: 'var(--success)', fontWeight: 'bold' }}>✓</span> : <span style={{ color: 'var(--text-muted)' }}>X</span>}
                     </td>
-                    <td style={{textAlign: 'center'}}>
-                      {log.was_escalated ? <span style={{color: 'var(--success)', fontWeight:'bold'}}>✓</span> : <span style={{color: 'var(--text-muted)'}}>-</span>}
-                    </td>
-                    <td style={{textAlign: 'center'}}>
-                      <div className={`status-dot ${log.pinecone_found_context ? 'live' : 'offline'}`} style={{display: 'inline-block'}} />
+                    <td style={{ textAlign: 'center' }}>
+                      <div className={`status-dot ${log.pinecone_found_context ? 'live' : 'offline'}`} style={{ display: 'inline-block' }} />
                     </td>
                   </tr>
                 )
@@ -189,10 +183,10 @@ export default function SessionLogs() {
             )}
           </tbody>
         </table>
-        
+
         {/* Load more button placeholder for infinite scroll alternative */}
         {!loading && filteredLogs.length > 0 && (
-          <div style={{padding: 16, textAlign: 'center', borderTop: '1px solid var(--border)'}}>
+          <div style={{ padding: 16, textAlign: 'center', borderTop: '1px solid var(--border)' }}>
             <button className="btn btn-secondary">Load more logs</button>
           </div>
         )}
