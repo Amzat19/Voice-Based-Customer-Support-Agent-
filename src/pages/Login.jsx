@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { supabase } from '../supabase';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -7,6 +8,7 @@ export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [magicLinkSent, setMagicLinkSent] = useState(false);
+  const navigate = useNavigate();
 
   const handlePasswordLogin = async (e) => {
     e.preventDefault();
@@ -26,6 +28,7 @@ export default function Login() {
       setError(signInError.message);
     }
     setLoading(false);
+    navigate('/dashboard');
   };
 
   const handleMagicLink = async (e) => {
